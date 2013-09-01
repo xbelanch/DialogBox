@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="DialogBox2" package="com.example.dialogbox2" version="1.0.0" company="Company Name" />
+	<app main="Main" path="Export" file="DialogBox2" />
+	
+	<!-- output -->
+	<window background="0xff00ff" orientation="landscape" fps="60" />
+	<window width="800" height="600" if="desktop" />
+	<window width="480" height="320" if="flash" />
+	<window width="0" height="0" if="html5" /><!-- 100% -->
+
+	<source path="Source" />
+	<source path="Assets" />
+	
+
+	<haxelib name="openfl" />
+	
+	<assets path="Assets" rename="assets" exclude="openfl.svg" />
+	<icon path="Assets/openfl.svg" />
+	
+</project>
