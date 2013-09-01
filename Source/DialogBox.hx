@@ -6,6 +6,7 @@ import flash.Lib;
 import openfl.display.Tilesheet;
 import flash.geom.Rectangle;
 import flash.geom.Point;
+import flash.display.Shape;
 
 @:bitmap("landscape.png")
 	class LandscapePNG extends BitmapData {
@@ -57,12 +58,15 @@ class Logo
 	var outputBMP:Bitmap;
 	var spr:Sprite;
 	var bg:Sprite;
+	var mask_obj:Sprite;
 	public var view:Sprite;
 	var tilesheet:openfl.display.Tilesheet;
+	var t0:Int;
+	var ball:Ball;
 
 	public function new()
 	{
-		output = new BitmapData(512, 512, false, 0x0);
+		output = new BitmapData(512, 512, true, 0x0);
 		outputBMP = new Bitmap(output);
 		outputBMP.x = -output.width / 2;
 		outputBMP.y = -output.height / 2;
@@ -71,8 +75,26 @@ class Logo
 		view = new Sprite();
 		bg = new Sprite();
 		spr = new Sprite();
+
+		ball = new Ball();
+
+		// MASK
+		mask_obj = new Sprite();
+		mask_obj.graphics.beginFill(0x0);
+		mask_obj.graphics.drawRect(
+			-output.width/2,
+			-output.height/2,
+			output.width,
+			output.height);
+		mask_obj.graphics.endFill();
+		mask_obj.name = "mask_obj";
+
+
+		view.addChild(mask_obj);
 		view.addChild(outputBMP);
 		view.addChild(spr);
+		view.mask = mask_obj;
+
 		init();
 
 	}
@@ -94,18 +116,49 @@ class Logo
 	// RENDER LOOP
 	private function enterFrame(e:Event):Void
 	{
+		var t = Lib.getTimer();
+		var dt:Float = Math.min(34, t - t0);
+		t0 = t;
+		var dk:Float = dt / 17;
 
+
+		if (ball.x < -output.width/2 || ball.x > output.width/2 ||
+			ball.y < -output.height/2 || ball.y > output.height/2 )
+			ball.dir *= -1;
+
+		ball.update(dk);
+		// trace(dk);
 		spr.graphics.clear();
 		tilesheet.drawTiles(spr.graphics,
 			[
-				-output.width/2, // x pos
-				-output.height/2, // y pos
+				ball.x,  // x pos
+				ball.y, // y pos
 				0, // index tile
 				1 // scale
 			],
 			true, Tilesheet.TILE_SCALE
 		);
 
+	}
+
+}
+
+
+class Ball {
+	public var x:Float;
+	public var y:Float;
+	public var dir:Int;
+
+	public function new()
+	{
+		x = y = 0.0;
+		dir = 1;
+	}
+
+	public function update(dt:Float)
+	{
+		x += 3.9 * dir * dt;
+		y += 1.5 * dir * dt;
 	}
 
 }
